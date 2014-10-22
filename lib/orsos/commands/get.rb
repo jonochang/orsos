@@ -26,7 +26,7 @@ module Orsos::Commands
       
       (from_date..to_date).each do |date|
         Orsos::Webdownloader.new(options[:verbose])
-                            .get_campaign_finance_transactions date, "sos_transactions"
+                            .save_campaign_finance_transactions_to_xls date, "sos_transactions"
       end
     end
   end

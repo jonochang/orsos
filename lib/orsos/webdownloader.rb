@@ -6,9 +6,21 @@ class Orsos::Webdownloader
     @verbose = verbose
   end
 
-  def get_campaign_finance_transactions date, filename_prefix="sos_transactions"
+  def save_campaign_finance_transactions_to_xls date, filename_prefix="sos_transactions"
     puts "downloading transactions for #{date.strftime('%Y-%m-%d')}"
+    filename = "#{filename_prefix}_#{date.strftime("%Y%m%d")}-#{DateTime.now.strftime("%Y%m%d%H%M%S")}.xls"
+
+    export_page = download_campaign_finance_transactions date
+    raise "could not download campaign finance transactions" if export_page.nil?
+    File.open(filename, 'wb') {|f| f.write(export_page.body) } if export_page
+
+    puts "saved transactions for #{date.strftime("%Y-%m-%d")} to #{filename}"
+  end
+
+private
+  def download_campaign_finance_transactions date
     set_agent
+    export_page = nil
 
     @agent.get("#{@base_url}/orestar/gotoPublicTransactionSearch.do") do |search_page|
       search_page.form_with(name: 'cneSearchForm') do |form|
@@ -17,18 +29,14 @@ class Orsos::Webdownloader
 
         @results_page = @agent.submit(form, form.button_with(value: "Search"))
         if link = @results_page.link_with(text: "Export To Excel Format")
-          @export_page  = @agent.click(link)
-          filename = "#{filename_prefix}_#{date.strftime("%Y%m%d")}-#{DateTime.now.strftime("%Y%m%d%H%M%S")}.xls"
-          File.open(filename, 'wb') {|f|
-            f.write(@export_page.body)
-          }
-          puts "saved transactions for #{date.strftime("%Y-%m-%d")} to #{filename}"
+          export_page  = @agent.click(link)
         end
       end
     end
+
+    return export_page
   end
 
-private
   def set_source_xls_file_and_downloaded_at body, filename
     file = StringIO.new(body)
   end
