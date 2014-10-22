@@ -7,6 +7,7 @@ class Orsos::Webdownloader
   end
 
   def download_campaign_finance_transactions date, filename_prefix="sos_transactions"
+    puts "downloading transactions for #{date.strftime('%Y-%m-%d')}"
     set_agent
 
     @agent.get("#{@base_url}/orestar/gotoPublicTransactionSearch.do") do |search_page|
@@ -21,7 +22,7 @@ class Orsos::Webdownloader
           File.open(filename, 'wb') {|f|
             f.write(@export_page.body)
           }
-          puts "saved #{date.strftime("%Y-%m-%d")} to #{filename}"
+          puts "saved transactions for #{date.strftime("%Y-%m-%d")} to #{filename}"
         end
       end
     end
