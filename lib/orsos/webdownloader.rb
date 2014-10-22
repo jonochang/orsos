@@ -6,7 +6,7 @@ class Orsos::Webdownloader
     @verbose = verbose
   end
 
-  def download_campaign_finance_transactions date, filename_prefix="sos_transactions"
+  def get_campaign_finance_transactions date, filename_prefix="sos_transactions"
     puts "downloading transactions for #{date.strftime('%Y-%m-%d')}"
     set_agent
 
