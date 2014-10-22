@@ -10,13 +10,19 @@ module Orsos::Commands
       url = "#{ROOT_URL}/api/candidates.json"
       response = RestClient.get(url)
       if options[:text]
+        json = JSON.parse(response.body)
         puts "Candidates"
         puts "----------"
-        puts JSON.parse(response.body)
+        puts "id\tballot name\tparty\temail"
+        puts "-------------------------"
+        json["candidates"].each do |candidate|
+          puts "#{candidate["id"]}\t#{candidate["ballot_name"]}\t#{candidate["party_affiliation"]}\t#{candidate["email"]}"
+        end
       else
         puts JSON.pretty_generate(JSON.parse(response.body))
       end
     end
+
   end
 end
 
