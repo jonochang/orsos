@@ -1,8 +1,8 @@
+require 'date'
+
 module Orsos::Commands
   class Get < Thor
-    option :from, type: :string, require: true
-    option :to, type: :string
-    desc "transactions", "Download campaign finance transactions FROM till TO. eg., transactions --from=2014-10-01 --to=2014-10-31. TO defaults to today's date"
+    desc "get transactions FROM [TO]", "Download campaign finance transactions FROM till TO. eg., orsos get transactions 2014-10-01 2014-10-31. TO defaults to today's date"
     def transactions(from, to=Date.today)
       from_date = case from
         when Date
