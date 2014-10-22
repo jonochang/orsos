@@ -1,8 +1,9 @@
 require 'date'
+require_relative '../webdownloader'
 
 module Orsos::Commands
   class Get < Thor
-    desc "get transactions FROM [TO]", "Download campaign finance transactions FROM till TO. eg., orsos get transactions 2014-10-01 2014-10-31. TO defaults to today's date"
+    desc "get daily transactions FROM [TO]", "Download campaign finance transactions FROM till TO and saves to sos_transactions_{%Y%m%d}-{current time stamp}. eg., orsos get transactions 2014-10-01 2014-10-31. TO defaults to today's date"
     def transactions(from, to=Date.today)
       from_date = case from
         when Date
