@@ -1,7 +1,7 @@
 module Orsos::Commands
   class Get < Thor
-    option :from, type: :date, require: true
-    option :to, type: :date
+    option :from, type: :string, require: true
+    option :to, type: :string
     desc "transactions", "Download campaign finance transactions"
     def transactions(from, to=Date.today)
       from_date = case from
