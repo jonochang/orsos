@@ -2,6 +2,9 @@ require 'mechanize'
 require 'logger'
 
 class Orsos::Webdownloader
+  def initialize(verbose=false)
+    @verbose = verbose
+  end
 
   def download_campaign_finance_transactions date, filename_prefix="sos_transactions"
     set_agent
@@ -18,6 +21,7 @@ class Orsos::Webdownloader
           File.open(filename, 'wb') {|f|
             f.write(@export_page.body)
           }
+          puts "saved #{date.strftime("%Y-%m-%d")} to #{filename}"
         end
       end
     end
@@ -48,7 +52,7 @@ private
   def set_agent
     @agent = Mechanize.new
     @agent.user_agent_alias = 'Mac Safari'#'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_9_3) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/36.0.1985.125 Safari/537.36' # Wikipedia blocks "mechanize"
-    @agent.log = Logger.new(STDOUT)
+    @agent.log = Logger.new(STDOUT) if @verbose
 
     @history = @agent.history
     @base_url = URI 'https://secure.sos.state.or.us'

@@ -4,6 +4,7 @@ require_relative '../webdownloader'
 module Orsos::Commands
   class Get < Thor
     desc "get daily transactions FROM [TO]", "Download campaign finance transactions FROM till TO and saves to sos_transactions_{%Y%m%d}-{current time stamp}. eg., orsos get transactions 2014-10-01 2014-10-31. TO defaults to today's date"
+    option :verbose, type: :boolean
     def transactions(from, to=Date.today)
       from_date = case from
         when Date
@@ -24,7 +25,8 @@ module Orsos::Commands
       end
       
       (from_date..to_date).each do |date|
-        Orsos::Webdownloader.new.download_campaign_finance_transactions date, "sos_transactions"
+        Orsos::Webdownloader.new(options[:verbose])
+                            .download_campaign_finance_transactions date, "sos_transactions"
       end
     end
   end
