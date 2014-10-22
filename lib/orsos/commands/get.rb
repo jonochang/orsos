@@ -24,7 +24,7 @@ module Orsos::Commands
       end
       
       (from_date..to_date).each do |date|
-        Orsos::Webdownloader.new.download_campaign_finance_transactions date
+        Orsos::Webdownloader.new.download_campaign_finance_transactions date, "sos_transactions"
       end
     end
   end
