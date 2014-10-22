@@ -63,5 +63,5 @@ DEPENDENCIES
   pry-byebug
   rake
   repl_rake
-  rest_client
+  rest_client (~> 1.7.3)
   thor
