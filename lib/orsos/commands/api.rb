@@ -4,7 +4,7 @@ module Orsos::Commands
   class Api < Thor
     ROOT_URL = "http://hack-oregon-prototype.herokuapp.com"
 
-    desc "api candidates", "gets json or text for #{ROOT_URL}/api/candidates.json"
+    desc "candidates", "gets json or text for #{ROOT_URL}/api/candidates.json"
     option :text, type: :boolean
     def candidates
       url = "#{ROOT_URL}/api/candidates.json"

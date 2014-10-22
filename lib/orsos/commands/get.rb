@@ -3,7 +3,7 @@ require_relative '../webdownloader'
 
 module Orsos::Commands
   class Get < Thor
-    desc "get transactions FROM [TO]", "Download campaign finance transactions daily between FROM till TO and saves each day to sos_transactions_{%Y%m%d}-{current time stamp}. eg., orsos get transactions 2014-10-01 2014-10-31. TO defaults to today's date"
+    desc "transactions FROM [TO]", "Download campaign finance transactions daily between FROM till TO and saves each day to sos_transactions_{%Y%m%d}-{current time stamp}. eg., orsos get transactions 2014-10-01 2014-10-31. TO defaults to today's date"
     option :verbose, type: :boolean
     def transactions(from, to=Date.today)
       from_date = case from
