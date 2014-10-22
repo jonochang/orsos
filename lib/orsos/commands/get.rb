@@ -1,4 +1,4 @@
-class Orsos::GetCommand < Thor
+class Orsos::Commands::Get < Thor
   desc "transactions", "Download campaign finance transactions"
   def transactions
 
