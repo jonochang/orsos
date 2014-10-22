@@ -8,7 +8,6 @@ GEM
   specs:
     domain_name (0.5.21)
       unf (>= 0.0.5, < 1.0.0)
-    gli (2.12.2)
     http-cookie (1.0.2)
       domain_name (~> 0.5)
     mechanize (2.7.3)
@@ -38,7 +37,6 @@ PLATFORMS
 
 DEPENDENCIES
   bundler (~> 1.6)
-  gli
   mechanize
   orsos!
   rake
