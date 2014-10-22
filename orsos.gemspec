@@ -8,9 +8,9 @@ Gem::Specification.new do |spec|
   spec.version       = Orsos::VERSION
   spec.authors       = ["Jonathan Chang"]
   spec.email         = ["jonathan.chang@silverpond.com.au"]
-  spec.summary       = %q{TODO: Write a short summary. Required.}
-  spec.description   = %q{TODO: Write a longer description. Optional.}
-  spec.homepage      = ""
+  spec.summary       = %q{Oregon Secretary of State website (http://sos.oregon.gov/Pages/default.aspx) scraper}
+  spec.description   = %q{A command line tool to download data from the Oregon Secretary of State website (http://sos.oregon.gov/Pages/default.aspx). Uses mechanize gem to post search requests to the website and download excel files.}
+  spec.homepage      = "https://github.com/jonochang/orsos"
   spec.license       = "MIT"
 
   spec.files         = `git ls-files -z`.split("\x0")
