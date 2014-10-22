@@ -6,6 +6,13 @@ PATH
 GEM
   remote: https://rubygems.org/
   specs:
+    byebug (3.5.1)
+      columnize (~> 0.8)
+      debugger-linecache (~> 1.2)
+      slop (~> 3.6)
+    coderay (1.1.0)
+    columnize (0.8.9)
+    debugger-linecache (1.2.0)
     domain_name (0.5.21)
       unf (>= 0.0.5, < 1.0.0)
     http-cookie (1.0.2)
@@ -19,6 +26,7 @@ GEM
       nokogiri (~> 1.4)
       ntlm-http (~> 0.1, >= 0.1.1)
       webrobots (>= 0.0.9, < 0.2)
+    method_source (0.8.2)
     mime-types (2.3)
     mini_portile (0.6.0)
     net-http-digest_auth (1.4)
@@ -26,7 +34,16 @@ GEM
     nokogiri (1.6.3.1)
       mini_portile (= 0.6.0)
     ntlm-http (0.1.1)
+    pry (0.10.1)
+      coderay (~> 1.1.0)
+      method_source (~> 0.8.1)
+      slop (~> 3.4)
+    pry-byebug (2.0.0)
+      byebug (~> 3.4)
+      pry (~> 0.10)
     rake (10.3.2)
+    repl_rake (0.1.0)
+    slop (3.6.0)
     thor (0.19.1)
     unf (0.1.4)
       unf_ext
@@ -40,5 +57,7 @@ DEPENDENCIES
   bundler (~> 1.6)
   mechanize
   orsos!
+  pry-byebug
   rake
+  repl_rake
   thor
