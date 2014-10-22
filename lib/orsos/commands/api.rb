@@ -23,6 +23,13 @@ module Orsos::Commands
       end
     end
 
+    ### FIX for help issue (see commit) ###
+    package_name "api"
+
+    def self.banner(command, namespace = nil, subcommand = false)
+      "#{basename} #{@package_name} #{command.usage}"
+    end
+    ### END FIX ###
   end
 end
 

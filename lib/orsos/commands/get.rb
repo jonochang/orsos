@@ -29,5 +29,13 @@ module Orsos::Commands
                             .save_campaign_finance_transactions_to_xls date, "sos_transactions"
       end
     end
+
+    ### FIX for help issue (see commit) ###
+    package_name "get"
+
+    def self.banner(command, namespace = nil, subcommand = false)
+      "#{basename} #{@package_name} #{command.usage}"
+    end
+    ### END FIX ###
   end
 end
