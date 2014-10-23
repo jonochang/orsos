@@ -3,7 +3,6 @@
 Oregon Secretary of State Website Client. Use this tool to easily download transactions, candidate filings and committees excel files. Also provides a client to Hack Oregon API
 
 ## TODO
-- Transactions by commitee filing id
 - Candidate Filings
 - Committees
 
