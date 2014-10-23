@@ -6,6 +6,7 @@ module Orsos::Commands
     desc "transactions FROM [TO]", "Download campaign finance transactions daily between FROM till TO and saves each day to sos_transactions_{%Y%m%d}-{current time stamp}. eg., orsos get transactions 2014-10-01 2014-10-31. TO defaults to today's date"
     option :verbose, type: :boolean
     option :filer_id, type: :numeric
+    option :single_file, type: :boolean
     def transactions(from, to=Date.today)
       from_date = case from
         when Date
@@ -27,14 +28,24 @@ module Orsos::Commands
 
       trans_opts = options.select{|k,v| ['filer_id'].include?(k) }
       
-      (from_date..to_date).each do |date|
-        filename = "sos_transactions_#{date.strftime("%Y%m%d")}-#{DateTime.now.strftime("%Y%m%d%H%M%S")}.xls"
-
+      if !options['single_file'].nil?
+        filename = "sos_transactions_#{from_date.strftime("%Y%m%d")}-#{to_date.strftime("%Y%m%d")}-#{DateTime.now.strftime("%Y%m%d%H%M%S")}.xls"
         Orsos::Webdownloader.new(options[:verbose])
-                            .save_campaign_finance_transactions_to_xls from_date: date, 
-                                                                       to_date: date, 
+                            .save_campaign_finance_transactions_to_xls from_date: from_date, 
+                                                                       to_date: to_date, 
                                                                        filename: filename, 
                                                                        options: trans_opts
+
+      else
+        (from_date..to_date).each do |date|
+          filename = "sos_transactions_#{date.strftime("%Y%m%d")}-#{DateTime.now.strftime("%Y%m%d%H%M%S")}.xls"
+
+          Orsos::Webdownloader.new(options[:verbose])
+                              .save_campaign_finance_transactions_to_xls from_date: date, 
+                                                                         to_date: date, 
+                                                                         filename: filename, 
+                                                                         options: trans_opts
+        end
       end
     end
 
