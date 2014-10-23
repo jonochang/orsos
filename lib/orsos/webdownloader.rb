@@ -7,13 +7,13 @@ class Orsos::Webdownloader
     @verbose = verbose
   end
 
-  def save_campaign_finance_transactions from_date:, to_date:, filename: , csvbin:, options: {}
-    puts "downloading transactions for #{from_date.strftime('%Y-%m-%d')} till #{to_date.strftime('%Y-%m-%d')}"
+  def save_campaign_finance_transactions from_date:, to_date:, filename: , csvbin:, stdout:, options: {}
+    puts "downloading transactions for #{from_date.strftime('%Y-%m-%d')} till #{to_date.strftime('%Y-%m-%d')}" if !stdout
 
     export_page = download_campaign_finance_transactions from_date: from_date, to_date: to_date, filer_id: options['filer_id']
     raise "could not download campaign finance transactions" if export_page.nil?
 
-    if !csvbin.nil?
+    data = if !csvbin.nil?
       csvpath = find_executable csvbin
       raise "could not find #{csvbin} in $PATH" if csvpath.nil?
       file = Tempfile.new(['xls2csv-', '.xls'])
@@ -22,17 +22,19 @@ class Orsos::Webdownloader
         file.write(export_page.body)
         file.rewind
 
-        data = `#{csvpath} #{file.path}`
-      
-        File.open(filename, 'wb') {|f| f.write(data) } if data
+        `#{csvpath} #{file.path}`
       ensure
         file.close
         file.unlink
       end
-
-      puts "saved transactions for #{from_date.strftime("%Y-%m-%d")} till #{to_date.strftime('%Y-%m-%d')} to #{filename}"
     else
-      File.open(filename, 'wb') {|f| f.write(export_page.body) } if export_page
+      export_page.body
+    end
+
+    if stdout
+      $stdout.write data
+    else
+      File.open(filename, 'wb') {|f| f.write(data) }
       puts "saved transactions for #{from_date.strftime("%Y-%m-%d")} till #{to_date.strftime('%Y-%m-%d')} to #{filename}"
     end
   end

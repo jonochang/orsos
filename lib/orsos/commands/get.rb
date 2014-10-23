@@ -9,6 +9,7 @@ module Orsos::Commands
     option :single_file, type: :boolean, desc: 'search and save data in date range as a single file rather than one search per day'
     option :in2csv, type: :boolean, desc: 'use in2csv to convert downloaded xls to csv'
     option :xls2csv, type: :boolean, desc: 'use xls2csv to convert downloaded xls to csv'
+    option :stdout, type: :boolean, desc: 'output to stdout'
     def transactions(from, to=Date.today)
       from_date = case from
         when Date
@@ -47,6 +48,7 @@ module Orsos::Commands
                                                                 to_date: to_date, 
                                                                 filename: filename, 
                                                                 csvbin: csvbin,
+                                                                stdout: options['stdout'],
                                                                 options: trans_opts
 
       else
@@ -58,6 +60,7 @@ module Orsos::Commands
                                                                   to_date: date, 
                                                                   filename: filename, 
                                                                   csvbin: csvbin,
+                                                                  stdout: options['stdout'],
                                                                   options: trans_opts
         end
       end
