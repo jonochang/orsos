@@ -2,6 +2,10 @@ require 'mechanize'
 require 'logger'
 require 'mkmf'
 
+module MakeMakefile::Logging
+  @logfile = File::NULL
+end
+
 class Orsos::Webdownloader
   def initialize(verbose=false)
     @verbose = verbose
@@ -14,7 +18,7 @@ class Orsos::Webdownloader
     raise "could not download campaign finance transactions" if export_page.nil?
 
     data = if !csvbin.nil?
-      csvpath = find_executable csvbin
+      csvpath = find_executable0 csvbin
       raise "could not find #{csvbin} in $PATH" if csvpath.nil?
       file = Tempfile.new(['xls2csv-', '.xls'])
       file.binmode
