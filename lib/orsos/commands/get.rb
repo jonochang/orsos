@@ -4,11 +4,11 @@ require_relative '../webdownloader'
 module Orsos::Commands
   class Get < Thor
     desc "transactions FROM [TO]", "Download campaign finance transactions daily between FROM till TO and saves each day to sos_transactions_{%Y%m%d}-{current time stamp}. eg., orsos get transactions 2014-10-01 2014-10-31. TO defaults to today's date"
-    option :verbose, type: :boolean
-    option :filer_id, type: :numeric
-    option :single_file, type: :boolean
-    option :in2csv, type: :boolean
-    option :xls2csv, type: :boolean
+    option :verbose, type: :boolean, desc: 'turn on verbose logging of search'
+    option :filer_id, type: :numeric, desc: 'conduct search by filer_id'
+    option :single_file, type: :boolean, desc: 'search and save data in date range as a single file rather than one search per day'
+    option :in2csv, type: :boolean, desc: 'use in2csv to convert downloaded xls to csv'
+    option :xls2csv, type: :boolean, desc: 'use xls2csv to convert downloaded xls to csv'
     def transactions(from, to=Date.today)
       from_date = case from
         when Date
