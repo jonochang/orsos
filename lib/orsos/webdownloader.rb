@@ -6,7 +6,7 @@ class Orsos::Webdownloader
     @verbose = verbose
   end
 
-  def save_campaign_finance_transactions_to_xls from_date:, to_date:, filename: , **options
+  def save_campaign_finance_transactions_to_xls from_date:, to_date:, filename: , options: {}
     puts "downloading transactions for #{from_date.strftime('%Y-%m-%d')} till #{to_date.strftime('%Y-%m-%d')}"
 
     export_page = download_campaign_finance_transactions from_date: from_date, to_date: to_date, filer_id: options['filer_id']
