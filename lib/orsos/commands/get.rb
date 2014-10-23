@@ -5,6 +5,7 @@ module Orsos::Commands
   class Get < Thor
     desc "transactions FROM [TO]", "Download campaign finance transactions daily between FROM till TO and saves each day to sos_transactions_{%Y%m%d}-{current time stamp}. eg., orsos get transactions 2014-10-01 2014-10-31. TO defaults to today's date"
     option :verbose, type: :boolean
+    option :filer_id, type: :numeric
     def transactions(from, to=Date.today)
       from_date = case from
         when Date

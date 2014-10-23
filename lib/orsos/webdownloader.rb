@@ -26,6 +26,7 @@ private
       search_page.form_with(name: 'cneSearchForm') do |form|
         form.cneSearchTranFiledStartDate = date.strftime("%m/%d/%Y")
         form.cneSearchTranFiledEndDate = date.strftime("%m/%d/%Y")
+        form.cneSearchFilerCommitteeId = options['filer_id'] unless options['filer_id'].nil?
 
         @results_page = @agent.submit(form, form.button_with(value: "Search"))
         if link = @results_page.link_with(text: "Export To Excel Format")
