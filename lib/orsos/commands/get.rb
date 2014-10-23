@@ -7,6 +7,8 @@ module Orsos::Commands
     option :verbose, type: :boolean
     option :filer_id, type: :numeric
     option :single_file, type: :boolean
+    option :in2csv, type: :boolean
+    option :xls2csv, type: :boolean
     def transactions(from, to=Date.today)
       from_date = case from
         when Date
@@ -27,24 +29,36 @@ module Orsos::Commands
       end
 
       trans_opts = options.select{|k,v| ['filer_id'].include?(k) }
-      
+      if options['in2csv']
+        csvbin = 'in2csv'
+        fileext = 'csv'
+      elsif options['xls2csv']
+        csvbin = 'xls2csv'
+        fileext = 'csv'
+      else
+        csvbin = nil
+        fileext = 'xls'
+      end
+
       if !options['single_file'].nil?
-        filename = "sos_transactions_#{from_date.strftime("%Y%m%d")}-#{to_date.strftime("%Y%m%d")}-#{DateTime.now.strftime("%Y%m%d%H%M%S")}.xls"
+        filename = "sos_transactions_#{from_date.strftime("%Y%m%d")}-#{to_date.strftime("%Y%m%d")}-#{DateTime.now.strftime("%Y%m%d%H%M%S")}.#{fileext}"
         Orsos::Webdownloader.new(options[:verbose])
-                            .save_campaign_finance_transactions_to_xls from_date: from_date, 
-                                                                       to_date: to_date, 
-                                                                       filename: filename, 
-                                                                       options: trans_opts
+                            .save_campaign_finance_transactions from_date: from_date, 
+                                                                to_date: to_date, 
+                                                                filename: filename, 
+                                                                csvbin: csvbin,
+                                                                options: trans_opts
 
       else
         (from_date..to_date).each do |date|
-          filename = "sos_transactions_#{date.strftime("%Y%m%d")}-#{DateTime.now.strftime("%Y%m%d%H%M%S")}.xls"
+          filename = "sos_transactions_#{date.strftime("%Y%m%d")}-#{DateTime.now.strftime("%Y%m%d%H%M%S")}.#{fileext}"
 
           Orsos::Webdownloader.new(options[:verbose])
-                              .save_campaign_finance_transactions_to_xls from_date: date, 
-                                                                         to_date: date, 
-                                                                         filename: filename, 
-                                                                         options: trans_opts
+                              .save_campaign_finance_transactions from_date: date, 
+                                                                  to_date: date, 
+                                                                  filename: filename, 
+                                                                  csvbin: csvbin,
+                                                                  options: trans_opts
         end
       end
     end

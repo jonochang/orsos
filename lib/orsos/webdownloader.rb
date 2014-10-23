@@ -1,20 +1,40 @@
 require 'mechanize'
 require 'logger'
+require 'mkmf'
 
 class Orsos::Webdownloader
   def initialize(verbose=false)
     @verbose = verbose
   end
 
-  def save_campaign_finance_transactions_to_xls from_date:, to_date:, filename: , options: {}
+  def save_campaign_finance_transactions from_date:, to_date:, filename: , csvbin:, options: {}
     puts "downloading transactions for #{from_date.strftime('%Y-%m-%d')} till #{to_date.strftime('%Y-%m-%d')}"
 
     export_page = download_campaign_finance_transactions from_date: from_date, to_date: to_date, filer_id: options['filer_id']
     raise "could not download campaign finance transactions" if export_page.nil?
 
-    File.open(filename, 'wb') {|f| f.write(export_page.body) } if export_page
+    if !csvbin.nil?
+      csvpath = find_executable csvbin
+      raise "could not find #{csvbin} in $PATH" if csvpath.nil?
+      file = Tempfile.new(['xls2csv-', '.xls'])
+      file.binmode
+      begin
+        file.write(export_page.body)
+        file.rewind
 
-    puts "saved transactions for #{from_date.strftime("%Y-%m-%d")} till #{to_date.strftime('%Y-%m-%d')} to #{filename}"
+        data = `#{csvpath} #{file.path}`
+      
+        File.open(filename, 'wb') {|f| f.write(data) } if data
+      ensure
+        file.close
+        file.unlink
+      end
+
+      puts "saved transactions for #{from_date.strftime("%Y-%m-%d")} till #{to_date.strftime('%Y-%m-%d')} to #{filename}"
+    else
+      File.open(filename, 'wb') {|f| f.write(export_page.body) } if export_page
+      puts "saved transactions for #{from_date.strftime("%Y-%m-%d")} till #{to_date.strftime('%Y-%m-%d')} to #{filename}"
+    end
   end
 
 private
