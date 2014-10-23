@@ -28,8 +28,13 @@ module Orsos::Commands
       trans_opts = options.select{|k,v| ['filer_id'].include?(k) }
       
       (from_date..to_date).each do |date|
+        filename = "sos_transactions_#{date.strftime("%Y%m%d")}-#{DateTime.now.strftime("%Y%m%d%H%M%S")}.xls"
+
         Orsos::Webdownloader.new(options[:verbose])
-                            .save_campaign_finance_transactions_to_xls date, filename_prefix="sos_transactions", options=trans_opts
+                            .save_campaign_finance_transactions_to_xls from_date: date, 
+                                                                       to_date: date, 
+                                                                       filename: filename, 
+                                                                       options: trans_opts
       end
     end
 
