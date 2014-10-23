@@ -6,11 +6,11 @@ class Orsos::Webdownloader
     @verbose = verbose
   end
 
-  def save_campaign_finance_transactions_to_xls date, filename_prefix="sos_transactions"
+  def save_campaign_finance_transactions_to_xls date, filename_prefix="sos_transactions", options={}
     puts "downloading transactions for #{date.strftime('%Y-%m-%d')}"
     filename = "#{filename_prefix}_#{date.strftime("%Y%m%d")}-#{DateTime.now.strftime("%Y%m%d%H%M%S")}.xls"
 
-    export_page = download_campaign_finance_transactions date
+    export_page = download_campaign_finance_transactions date, options=options
     raise "could not download campaign finance transactions" if export_page.nil?
     File.open(filename, 'wb') {|f| f.write(export_page.body) } if export_page
 
@@ -18,7 +18,7 @@ class Orsos::Webdownloader
   end
 
 private
-  def download_campaign_finance_transactions date
+  def download_campaign_finance_transactions date, options={}
     set_agent
     export_page = nil
 

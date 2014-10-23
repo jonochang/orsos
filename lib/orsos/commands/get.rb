@@ -23,10 +23,12 @@ module Orsos::Commands
         else
           raise 'invalid to date'
       end
+
+      trans_opts = options.select{|k,v| ['filer_id'].include?(k) }
       
       (from_date..to_date).each do |date|
         Orsos::Webdownloader.new(options[:verbose])
-                            .save_campaign_finance_transactions_to_xls date, "sos_transactions"
+                            .save_campaign_finance_transactions_to_xls date, filename_prefix="sos_transactions", options=trans_opts
       end
     end
 
