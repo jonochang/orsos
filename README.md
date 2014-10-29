@@ -8,6 +8,7 @@ Oregon Secretary of State Website Client. Use this tool to easily download trans
 
 ## Requirements
 - Only tested with Ruby 2.1.2
+- If you want CSV support you'll need to install CSVKit (in2csv binary) or CatDoc (xls2csv).
 
 ## Installation
 
