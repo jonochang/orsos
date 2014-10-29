@@ -66,6 +66,33 @@ module Orsos::Commands
       end
     end
 
+    desc "committees", "Download committees information sos_committees_{search query}. eg., orsos get committees kitzhaber."
+    option :committee_name_contains, type: :string, desc: 'search by name of committee which contains.... eg., --committee_name=kitzhaber searches for records that contain kitzhaber in the name.'
+    option :in2csv, type: :boolean, desc: 'use in2csv to convert downloaded xls to csv'
+    option :xls2csv, type: :boolean, desc: 'use xls2csv to convert downloaded xls to csv'
+    option :stdout, type: :boolean, desc: 'output to stdout'
+
+    def committees
+      if options['in2csv']
+        @csvbin = 'in2csv'
+        @fileext = 'csv'
+      elsif options['xls2csv']
+        @csvbin = 'xls2csv'
+        @fileext = 'csv'
+      else
+        @csvbin = nil
+        @fileext = 'xls'
+      end
+
+      filename = "sos_committees_#{options['committee_name_contains']}.#{@fileext}"
+      Orsos::Webdownloader.new(options[:verbose])
+                          .save_committees committee_name_contains: options['committee_name_contains'], 
+                                                              filename: filename, 
+                                                              csvbin: @csvbin,
+                                                              stdout: options['stdout']
+
+    end
+
     ### FIX for help issue (see commit) ###
     package_name "get"
 

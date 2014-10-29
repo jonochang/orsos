@@ -43,6 +43,36 @@ class Orsos::Webdownloader
     end
   end
 
+  def save_committees committee_name_contains:, filename: , csvbin:, stdout:, options: {}
+    export_page = download_committees committee_name: committee_name_contains, committee_name_search_type: 'contains'
+    raise "could not download committees" if export_page.nil?
+
+    data = if !csvbin.nil?
+      csvpath = find_executable0 csvbin
+      raise "could not find #{csvbin} in $PATH" if csvpath.nil?
+      file = Tempfile.new(['xls2csv-', '.xls'])
+      file.binmode
+      begin
+        file.write(export_page.body)
+        file.rewind
+
+        `#{csvpath} #{file.path}`
+      ensure
+        file.close
+        file.unlink
+      end
+    else
+      export_page.body
+    end
+
+    if stdout
+      $stdout.write data
+    else
+      File.open(filename, 'wb') {|f| f.write(data) }
+      puts "saved commmittees for #{committee_name_contains} to #{filename}"
+    end
+  end
+
 private
   def download_campaign_finance_transactions from_date:, to_date:, filer_id: nil
     set_agent
@@ -61,6 +91,38 @@ private
       end
     end
 
+    return export_page
+  end
+
+  def download_committees committee_name: '', committee_name_search_type: 'contains'
+    set_agent
+    export_page = nil
+
+    @agent.get("#{@base_url}/orestar/GotoSearchByName.do") do |search_page|
+      @results_page = @agent.post('https://secure.sos.state.or.us/orestar/CommitteeSearchFirstPage.do', {
+        buttonName: '',
+        page: 100,
+        committeeName: committee_name,
+        committeeNameMultiboxText: committee_name_search_type,
+        committeeId: '',
+        firstName: '',
+        firstNameMultiboxText: 'contains',
+        lastName: '',
+        lastNameMultiboxText: 'contains',
+        discontinuedSOO: 'on',
+        submit: 'Submit',
+        approvedSOO: 'true',
+        pendingApprovalSOO: 'false',
+        insufficientSOO: 'false',
+        resolvedSOO: 'false',
+        rejectedSOO: 'false'
+      }) 
+
+      if link = @results_page.link_with(text: "Export To Excel Format")
+        export_page  = @agent.click(link)
+      end
+    end
+   
     return export_page
   end
 
