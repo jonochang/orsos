@@ -40,8 +40,6 @@ class Orsos::Webdownloader
 
   end
 
-
-private
   def save msg, &block
     puts "downloading #{msg}" if !@stdout
 
@@ -126,6 +124,8 @@ private
 
     return export_page
   end
+
+  private
 
   def convert_to_csv body
     csvpath = find_executable0 @csvbin
