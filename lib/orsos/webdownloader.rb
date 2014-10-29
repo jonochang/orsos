@@ -7,13 +7,14 @@ module MakeMakefile::Logging
 end
 
 class Orsos::Webdownloader
-  def initialize(verbose: false, csvbin: nil, stdout: false)
+  def initialize(verbose: false, csvbin: nil, stdout: false, filename: nil)
     @verbose = verbose
     @csvbin = csvbin
     @stdout = stdout
+    @filename = filename
   end
 
-  def save_campaign_finance_transactions from_date:, to_date:, filename: , options: {}
+  def save_campaign_finance_transactions from_date:, to_date:, options: {}
     save("transactions for #{from_date.strftime('%Y-%m-%d')} till #{to_date.strftime('%Y-%m-%d')}") do
       export_page = download_campaign_finance_transactions from_date: from_date, to_date: to_date, filer_id: options['filer_id']
       raise "could not download campaign finance transactions" if export_page.nil?
@@ -22,7 +23,7 @@ class Orsos::Webdownloader
     end
   end
 
-  def save_committees committee_name_contains:, filename: , options: {}
+  def save_committees committee_name_contains:, options: {}
     save("committees searched by #{committee_name_contains}") do
       export_page = download_committees committee_name: committee_name_contains, committee_name_search_type: 'contains'
       raise "could not download committees" if export_page.nil?
@@ -40,8 +41,8 @@ private
     if @stdout
       $stdout.write data
     else
-      File.open(filename, 'wb') {|f| f.write(data) }
-      puts "saved #{msg} to #{filename}"
+      File.open(@filename, 'wb') {|f| f.write(data) }
+      puts "saved #{msg} to #{@filename}"
     end
   end
 

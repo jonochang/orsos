@@ -30,37 +30,18 @@ module Orsos::Commands
       end
 
       trans_opts = options.select{|k,v| ['filer_id'].include?(k) }
-      if options['in2csv']
-        csvbin = 'in2csv'
-        fileext = 'csv'
-      elsif options['xls2csv']
-        csvbin = 'xls2csv'
-        fileext = 'csv'
-      else
-        csvbin = nil
-        fileext = 'xls'
-      end
 
       if !options['single_file'].nil?
-        filename = "sos_transactions_#{from_date.strftime("%Y%m%d")}-#{to_date.strftime("%Y%m%d")}-#{DateTime.now.strftime("%Y%m%d%H%M%S")}.#{fileext}"
-        Orsos::Webdownloader.new(verbose: options[:verbose],
-                                 csvbin: csvbin,
-                                 stdout: options['stdout'])
+        Orsos::Webdownloader.new(get_downloader_options(filename: "sos_transactions_#{from_date.strftime("%Y%m%d")}-#{to_date.strftime("%Y%m%d")}-#{DateTime.now.strftime("%Y%m%d%H%M%S")}", options: options))
                             .save_campaign_finance_transactions from_date: from_date, 
                                                                 to_date: to_date, 
-                                                                filename: filename, 
                                                                 options: trans_opts
 
       else
         (from_date..to_date).each do |date|
-          filename = "sos_transactions_#{date.strftime("%Y%m%d")}-#{DateTime.now.strftime("%Y%m%d%H%M%S")}.#{fileext}"
-
-          Orsos::Webdownloader.new(verbose: options[:verbose],
-                                   csvbin: csvbin,
-                                   stdout: options['stdout'])
+          Orsos::Webdownloader.new(get_downloader_options(filename: "sos_transactions_#{date.strftime("%Y%m%d")}-#{DateTime.now.strftime("%Y%m%d%H%M%S")}", options: options))
                               .save_campaign_finance_transactions from_date: date, 
                                                                   to_date: date, 
-                                                                  filename: filename, 
                                                                   options: trans_opts
         end
       end
@@ -71,26 +52,11 @@ module Orsos::Commands
     option :in2csv, type: :boolean, desc: 'use in2csv to convert downloaded xls to csv'
     option :xls2csv, type: :boolean, desc: 'use xls2csv to convert downloaded xls to csv'
     option :stdout, type: :boolean, desc: 'output to stdout'
+    option :verbose, type: :boolean, desc: 'turn on verbose logging of search'
 
     def committees
-      if options['in2csv']
-        @csvbin = 'in2csv'
-        @fileext = 'csv'
-      elsif options['xls2csv']
-        @csvbin = 'xls2csv'
-        @fileext = 'csv'
-      else
-        @csvbin = nil
-        @fileext = 'xls'
-      end
-
-      filename = "sos_committees_#{options['committee_name_contains']}.#{@fileext}"
-      Orsos::Webdownloader.new(verbose: options[:verbose],
-                               csvbin: @csvbin,
-                               stdout: options['stdout'])
-                          .save_committees committee_name_contains: options['committee_name_contains'], 
-                                                              filename: filename
-
+      Orsos::Webdownloader.new(get_downloader_options(filename: "sos_committees_#{options['committee_name_contains']}", options: options))
+                          .save_committees committee_name_contains: options['committee_name_contains']
     end
 
     ### FIX for help issue (see commit) ###
@@ -100,5 +66,26 @@ module Orsos::Commands
       "#{basename} #{@package_name} #{command.usage}"
     end
     ### END FIX ###
+    private
+
+    def get_downloader_options filename: , options: {}
+      if options['in2csv']
+        csvbin = 'in2csv'
+        fileext = 'csv'
+      elsif options['xls2csv']
+        csvbin = 'xls2csv'
+        fileext = 'csv'
+      else
+        csvbin = nil
+        fileext = 'xls'
+      end
+      
+      {
+        verbose: options[:verbose],
+        csvbin: csvbin,
+        stdout: options['stdout'],
+        filename: "#{filename}.#{fileext}"
+      }
+    end
   end
 end
