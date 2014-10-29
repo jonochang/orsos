@@ -1,7 +1,10 @@
 PATH
   remote: .
   specs:
-    orsos (0.0.2)
+    orsos (0.0.3)
+      mechanize
+      rest_client (~> 1.7.3)
+      thor
 
 GEM
   remote: https://rubygems.org/
@@ -58,10 +61,7 @@ PLATFORMS
 
 DEPENDENCIES
   bundler (~> 1.6)
-  mechanize
   orsos!
   pry-byebug
   rake
   repl_rake
-  rest_client (~> 1.7.3)
-  thor
