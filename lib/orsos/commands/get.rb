@@ -3,13 +3,14 @@ require_relative '../webdownloader'
 
 module Orsos::Commands
   class Get < Thor
+    class_option :in2csv, type: :boolean, desc: 'use in2csv to convert downloaded xls to csv'
+    class_option :xls2csv, type: :boolean, desc: 'use xls2csv to convert downloaded xls to csv'
+    class_option :stdout, type: :boolean, desc: 'output to stdout'
+    class_option :verbose, type: :boolean, desc: 'turn on verbose logging of search'
+
     desc "transactions FROM [TO]", "Download campaign finance transactions daily between FROM till TO and saves each day to sos_transactions_{%Y%m%d}-{current time stamp}. eg., orsos get transactions 2014-10-01 2014-10-31. TO defaults to today's date"
-    option :verbose, type: :boolean, desc: 'turn on verbose logging of search'
     option :filer_id, type: :numeric, desc: 'conduct search by filer_id'
     option :single_file, type: :boolean, desc: 'search and save data in date range as a single file rather than one search per day'
-    option :in2csv, type: :boolean, desc: 'use in2csv to convert downloaded xls to csv'
-    option :xls2csv, type: :boolean, desc: 'use xls2csv to convert downloaded xls to csv'
-    option :stdout, type: :boolean, desc: 'output to stdout'
     def transactions(from, to=Date.today)
       from_date = case from
         when Date
@@ -49,20 +50,12 @@ module Orsos::Commands
 
     desc "committees", "Download committees information sos_committees_{search query}. eg., orsos get committees kitzhaber."
     option :committee_name_contains, type: :string, desc: 'search by name of committee which contains.... eg., --committee_name=kitzhaber searches for records that contain kitzhaber in the name.'
-    option :in2csv, type: :boolean, desc: 'use in2csv to convert downloaded xls to csv'
-    option :xls2csv, type: :boolean, desc: 'use xls2csv to convert downloaded xls to csv'
-    option :stdout, type: :boolean, desc: 'output to stdout'
-    option :verbose, type: :boolean, desc: 'turn on verbose logging of search'
     def committees
       Orsos::Webdownloader.new(get_downloader_options(filename: "sos_committees_#{options['committee_name_contains']}", options: options))
                           .save_committees committee_name_contains: options['committee_name_contains']
     end
 
     desc "candidate_filings FROM [TO]", "Download candidate_filings between FROM till TO into sos_candidate_filings_{from %Y%m%d}-{to %Y%m%d}-{current time stamp}. eg., orsos get candidate_filings 2014-10-01 2014-10-31. TO defaults to today's date"
-    option :in2csv, type: :boolean, desc: 'use in2csv to convert downloaded xls to csv'
-    option :xls2csv, type: :boolean, desc: 'use xls2csv to convert downloaded xls to csv'
-    option :stdout, type: :boolean, desc: 'output to stdout'
-    option :verbose, type: :boolean, desc: 'turn on verbose logging of search'
     def candidate_filings(from, to=Date.today)
       from_date = case from
         when Date
