@@ -3,8 +3,7 @@
 Oregon Secretary of State Website Client. Use this tool to easily download transactions, candidate filings and committees excel files. Also provides a client to Hack Oregon API
 
 ## TODO
-- Candidate Filings
-- Committees
+- add more query params to actions
 
 ## Requirements
 - Only tested with Ruby 2.1.2
