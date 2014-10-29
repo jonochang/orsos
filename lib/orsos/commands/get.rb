@@ -43,24 +43,24 @@ module Orsos::Commands
 
       if !options['single_file'].nil?
         filename = "sos_transactions_#{from_date.strftime("%Y%m%d")}-#{to_date.strftime("%Y%m%d")}-#{DateTime.now.strftime("%Y%m%d%H%M%S")}.#{fileext}"
-        Orsos::Webdownloader.new(options[:verbose])
+        Orsos::Webdownloader.new(verbose: options[:verbose],
+                                 csvbin: csvbin,
+                                 stdout: options['stdout'])
                             .save_campaign_finance_transactions from_date: from_date, 
                                                                 to_date: to_date, 
                                                                 filename: filename, 
-                                                                csvbin: csvbin,
-                                                                stdout: options['stdout'],
                                                                 options: trans_opts
 
       else
         (from_date..to_date).each do |date|
           filename = "sos_transactions_#{date.strftime("%Y%m%d")}-#{DateTime.now.strftime("%Y%m%d%H%M%S")}.#{fileext}"
 
-          Orsos::Webdownloader.new(options[:verbose])
+          Orsos::Webdownloader.new(verbose: options[:verbose],
+                                   csvbin: csvbin,
+                                   stdout: options['stdout'])
                               .save_campaign_finance_transactions from_date: date, 
                                                                   to_date: date, 
                                                                   filename: filename, 
-                                                                  csvbin: csvbin,
-                                                                  stdout: options['stdout'],
                                                                   options: trans_opts
         end
       end
@@ -85,11 +85,11 @@ module Orsos::Commands
       end
 
       filename = "sos_committees_#{options['committee_name_contains']}.#{@fileext}"
-      Orsos::Webdownloader.new(options[:verbose])
+      Orsos::Webdownloader.new(verbose: options[:verbose],
+                               csvbin: @csvbin,
+                               stdout: options['stdout'])
                           .save_committees committee_name_contains: options['committee_name_contains'], 
-                                                              filename: filename, 
-                                                              csvbin: @csvbin,
-                                                              stdout: options['stdout']
+                                                              filename: filename
 
     end
 

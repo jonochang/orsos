@@ -7,35 +7,21 @@ module MakeMakefile::Logging
 end
 
 class Orsos::Webdownloader
-  def initialize(verbose=false)
+  def initialize(verbose: false, csvbin: nil, stdout: false)
     @verbose = verbose
+    @csvbin = csvbin
+    @stdout = stdout
   end
 
-  def save_campaign_finance_transactions from_date:, to_date:, filename: , csvbin:, stdout:, options: {}
-    puts "downloading transactions for #{from_date.strftime('%Y-%m-%d')} till #{to_date.strftime('%Y-%m-%d')}" if !stdout
+  def save_campaign_finance_transactions from_date:, to_date:, filename: , options: {}
+    puts "downloading transactions for #{from_date.strftime('%Y-%m-%d')} till #{to_date.strftime('%Y-%m-%d')}" if !@stdout
 
     export_page = download_campaign_finance_transactions from_date: from_date, to_date: to_date, filer_id: options['filer_id']
     raise "could not download campaign finance transactions" if export_page.nil?
 
-    data = if !csvbin.nil?
-      csvpath = find_executable0 csvbin
-      raise "could not find #{csvbin} in $PATH" if csvpath.nil?
-      file = Tempfile.new(['xls2csv-', '.xls'])
-      file.binmode
-      begin
-        file.write(export_page.body)
-        file.rewind
+    data = !@csvbin.nil? ? convert_to_csv(export_page.body) : export_page.body
 
-        `#{csvpath} #{file.path}`
-      ensure
-        file.close
-        file.unlink
-      end
-    else
-      export_page.body
-    end
-
-    if stdout
+    if @stdout
       $stdout.write data
     else
       File.open(filename, 'wb') {|f| f.write(data) }
@@ -43,29 +29,13 @@ class Orsos::Webdownloader
     end
   end
 
-  def save_committees committee_name_contains:, filename: , csvbin:, stdout:, options: {}
+  def save_committees committee_name_contains:, filename: , options: {}
     export_page = download_committees committee_name: committee_name_contains, committee_name_search_type: 'contains'
     raise "could not download committees" if export_page.nil?
 
-    data = if !csvbin.nil?
-      csvpath = find_executable0 csvbin
-      raise "could not find #{csvbin} in $PATH" if csvpath.nil?
-      file = Tempfile.new(['xls2csv-', '.xls'])
-      file.binmode
-      begin
-        file.write(export_page.body)
-        file.rewind
+    data = !@csvbin.nil? ? convert_to_csv(export_page.body) : export_page.body
 
-        `#{csvpath} #{file.path}`
-      ensure
-        file.close
-        file.unlink
-      end
-    else
-      export_page.body
-    end
-
-    if stdout
+    if @stdout
       $stdout.write data
     else
       File.open(filename, 'wb') {|f| f.write(data) }
@@ -124,6 +94,22 @@ private
     end
    
     return export_page
+  end
+
+  def convert_to_csv body
+    csvpath = find_executable0 @csvbin
+    raise "could not find #{@csvbin} in $PATH" if csvpath.nil?
+    file = Tempfile.new(['xls2csv-', '.xls'])
+    file.binmode
+    begin
+      file.write(body)
+      file.rewind
+
+      return `#{csvpath} #{file.path}`
+    ensure
+      file.close
+      file.unlink
+    end
   end
 
   def set_source_xls_file_and_downloaded_at body, filename
