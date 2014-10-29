@@ -53,7 +53,6 @@ module Orsos::Commands
     option :xls2csv, type: :boolean, desc: 'use xls2csv to convert downloaded xls to csv'
     option :stdout, type: :boolean, desc: 'output to stdout'
     option :verbose, type: :boolean, desc: 'turn on verbose logging of search'
-
     def committees
       Orsos::Webdownloader.new(get_downloader_options(filename: "sos_committees_#{options['committee_name_contains']}", options: options))
                           .save_committees committee_name_contains: options['committee_name_contains']
@@ -65,6 +64,7 @@ module Orsos::Commands
     def self.banner(command, namespace = nil, subcommand = false)
       "#{basename} #{@package_name} #{command.usage}"
     end
+
     ### END FIX ###
     private
 
