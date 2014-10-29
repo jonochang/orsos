@@ -1,5 +1,4 @@
 #!/usr/bin/env ruby
 
 require 'orsos'
-require 'pry-byebug'
 Orsos::Command.start
