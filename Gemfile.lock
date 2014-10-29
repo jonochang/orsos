@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    orsos (0.0.5)
+    orsos (0.0.6)
       mechanize
       rest_client (~> 1.7.3)
       thor
