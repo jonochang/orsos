@@ -58,6 +58,34 @@ module Orsos::Commands
                           .save_committees committee_name_contains: options['committee_name_contains']
     end
 
+    desc "candidate_filings FROM [TO]", "Download candidate_filings between FROM till TO into sos_candidate_filings_{from %Y%m%d}-{to %Y%m%d}-{current time stamp}. eg., orsos get candidate_filings 2014-10-01 2014-10-31. TO defaults to today's date"
+    option :in2csv, type: :boolean, desc: 'use in2csv to convert downloaded xls to csv'
+    option :xls2csv, type: :boolean, desc: 'use xls2csv to convert downloaded xls to csv'
+    option :stdout, type: :boolean, desc: 'output to stdout'
+    option :verbose, type: :boolean, desc: 'turn on verbose logging of search'
+    def candidate_filings(from, to=Date.today)
+      from_date = case from
+        when Date
+          from
+        when String
+          Date.parse from
+        else
+          raise 'invalid from date'
+      end
+
+      to_date = case to
+        when Date
+          to
+        when String
+          Date.parse to
+        else
+          raise 'invalid to date'
+      end
+
+      Orsos::Webdownloader.new(get_downloader_options(filename: "sos_candidate_filings_#{from_date.strftime("%Y%m%d")}-#{to_date.strftime("%Y%m%d")}-#{DateTime.now.strftime("%Y%m%d%H%M%S")}", options: options))
+                          .save_candidate_filings from_date: from_date, to_date: to_date
+    end
+
     ### FIX for help issue (see commit) ###
     package_name "get"
 

@@ -31,6 +31,16 @@ class Orsos::Webdownloader
     end
   end
 
+  def save_candidate_filings from_date: , to_date: , options: {}
+    save("candidates filings for #{from_date.strftime('%Y-%m-%d')} till #{to_date.strftime('%Y-%m-%d')}") do
+      export_page = download_candidate_filings from_date: from_date, to_date: to_date
+      raise "could not download committees" if export_page.nil?
+      export_page.body
+    end
+
+  end
+
+
 private
   def save msg, &block
     puts "downloading #{msg}" if !@stdout
@@ -95,6 +105,25 @@ private
       end
     end
    
+    return export_page
+  end
+
+  def download_candidate_filings from_date: , to_date: nil
+    set_agent
+    export_page = nil
+
+    @agent.get("#{@base_url}/orestar/CFSearchPage.do") do |search_page|
+      search_page.form_with(name: 'cfSearchPageForm') do |form|
+        form.cfFilingFromDate = from_date.strftime("%m/%d/%Y")
+        form.cfFilingToDate = to_date.strftime("%m/%d/%Y")
+
+        @results_page = @agent.submit(form, form.button_with(value: "Submit"))
+        if link = @results_page.link_with(text: "Export")
+          export_page  = @agent.click(link)
+        end
+      end
+    end
+
     return export_page
   end
 
