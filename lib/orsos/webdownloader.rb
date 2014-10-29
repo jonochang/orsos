@@ -14,36 +14,37 @@ class Orsos::Webdownloader
   end
 
   def save_campaign_finance_transactions from_date:, to_date:, filename: , options: {}
-    puts "downloading transactions for #{from_date.strftime('%Y-%m-%d')} till #{to_date.strftime('%Y-%m-%d')}" if !@stdout
+    save("transactions for #{from_date.strftime('%Y-%m-%d')} till #{to_date.strftime('%Y-%m-%d')}") do
+      export_page = download_campaign_finance_transactions from_date: from_date, to_date: to_date, filer_id: options['filer_id']
+      raise "could not download campaign finance transactions" if export_page.nil?
 
-    export_page = download_campaign_finance_transactions from_date: from_date, to_date: to_date, filer_id: options['filer_id']
-    raise "could not download campaign finance transactions" if export_page.nil?
-
-    data = !@csvbin.nil? ? convert_to_csv(export_page.body) : export_page.body
-
-    if @stdout
-      $stdout.write data
-    else
-      File.open(filename, 'wb') {|f| f.write(data) }
-      puts "saved transactions for #{from_date.strftime("%Y-%m-%d")} till #{to_date.strftime('%Y-%m-%d')} to #{filename}"
+      export_page.body
     end
   end
 
   def save_committees committee_name_contains:, filename: , options: {}
-    export_page = download_committees committee_name: committee_name_contains, committee_name_search_type: 'contains'
-    raise "could not download committees" if export_page.nil?
+    save("committees searched by #{committee_name_contains}") do
+      export_page = download_committees committee_name: committee_name_contains, committee_name_search_type: 'contains'
+      raise "could not download committees" if export_page.nil?
+      export_page.body
+    end
+  end
 
-    data = !@csvbin.nil? ? convert_to_csv(export_page.body) : export_page.body
+private
+  def save msg, &block
+    puts "downloading #{msg}" if !@stdout
+
+    body = block.call
+    data = !@csvbin.nil? ? convert_to_csv(body) : body
 
     if @stdout
       $stdout.write data
     else
       File.open(filename, 'wb') {|f| f.write(data) }
-      puts "saved commmittees for #{committee_name_contains} to #{filename}"
+      puts "saved #{msg} to #{filename}"
     end
   end
 
-private
   def download_campaign_finance_transactions from_date:, to_date:, filer_id: nil
     set_agent
     export_page = nil
