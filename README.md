@@ -6,6 +6,9 @@ Oregon Secretary of State Website Client. Use this tool to easily download trans
 - Candidate Filings
 - Committees
 
+## Requirements
+- Only tested with Ruby 2.1.2
+
 ## Installation
 
 Add this line to your application's Gemfile:
